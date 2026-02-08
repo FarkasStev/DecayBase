@@ -15,12 +15,19 @@ class CodeModule:
         self.lines_of_code += feature.lines_of_code
         self.complexity += feature.complexity
         for developer in developers:
-            developer.burnout += feature.estimated_hours / len(developers)
+            developer.burnout += (
+                feature.estimated_hours / len(developers)
+            ) - developer.skill
+            if self in developer.specialized_code_modules:
+                developer.burnout -= 0.1 * feature.estimated_hours / len(developers)
             developer.skill += feature.complexity / len(developers)
 
     def test_feature(self, feature, testers):
         self.test_coverage += feature.test_coverage
         self.documentation_quality += feature.documentation_quality
         for tester in testers:
-            tester.burnout += feature.estimated_hours / len(testers)
+            tester.burnout += (feature.estimated_hours / len(testers)) - tester.skill
             tester.skill += feature.complexity / len(testers)
+
+    def __repr__(self):
+        return f"CodeModule(dependencies={self.dependencies}, test_coverage={self.test_coverage}, documentation_quality={self.documentation_quality}, lines_of_code={self.lines_of_code}, complexity={self.complexity}, hours_technical_debt={self.hours_technical_debt})"
