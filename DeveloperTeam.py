@@ -20,7 +20,7 @@ class DeveloperTeam:
             if developer.is_burned_out():
                 self.developers.remove(developer)
         for tester in self.testers:
-            if tester.is_burnt_out():
+            if tester.is_burned_out():
                 self.testers.remove(tester)
 
     def add_developer(self, developer):

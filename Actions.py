@@ -9,19 +9,23 @@ class Action(Enum):
     ADD_FEATURE = 1
     REFACTOR = 2
     ONBOARD_DEV = 3
-    RUSH_DEADLINE = 4
+    ONBOARD_TESTER = 4
+    RUSH_DEADLINE = 5
 
     def take_action(self, team, codebase):
-        if self.name == "ADD_FEATURE":
-            self.add_feature(team, codebase)
-        elif self.name == "REFACTOR":
-            self.refactor(team)
-        elif self.name == "ONBOARD_DEV":
-            self.onboard_dev(team)
-        elif self.name == "RUSH_DEADLINE":
-            self.rush_deadline(team)
-        else:
-            raise ValueError(f"Invalid action: {self.name}")
+        match self.name:
+            case "ADD_FEATURE":
+                self.add_feature(team, codebase)
+            case "REFACTOR":
+                self.refactor(team)
+            case "ONBOARD_DEV":
+                self.onboard_dev(team)
+            case "ONBOARD_TESTER":
+                self.onboard_tester(team)
+            case "RUSH_DEADLINE":
+                self.rush_deadline(team)
+            case _:
+                raise ValueError(f"Invalid action: {self.name}")
 
         team.remove_quitters()
         cost = self.incur_cost(team)
@@ -33,6 +37,7 @@ class Action(Enum):
         for module in codebase.code_modules:
             module.develop_feature(feature, team.developers)
             module.test_feature(feature, team.testers)
+            team.money += module.lines_of_code * module.complexity
         print("Adding a new feature")
 
     def refactor(self, team):
@@ -41,6 +46,10 @@ class Action(Enum):
     def onboard_dev(self, team):
         print("Onboarding a new developer")
         team.add_developer(Developer())
+
+    def onboard_tester(self, team):
+        print("Onboarding a new tester")
+        team.add_tester(Tester())
 
     def rush_deadline(self, team):
         print("Rushing to meet a deadline")
